@@ -1,38 +1,57 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import avengers from "../app/photo/avengers.png";
-import avatar from "../app/photo/avatar.png";
-import titanic from "../app/photo/titanic.png";
-import us from "../app/photo/us.png";
+import gta3 from "../app/photo/gta3.jpg";
+import gta4 from "../app/photo/gta4.jpg";
+import gta5v from "../app/photo/gta5v.jpg";
+import gtavc from "../app/photo/gtavc.jpg";
 import { genres } from "./genres"; // Импортируем список жанров
-import bg from "../app/photo/bg.png";
 import Link from "next/link";
+import { motion } from "framer-motion"; // Подключаем framer-motion для анимаций
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0); // Текущее изображение
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filteredMovies, setFilteredMovies] = useState(genres); // Состояние для фильтрованных фильмов
 
-  const images = [avengers, avatar, titanic, us];
-  const descriptions = [
-    "Мстители — фантастический боевик о супергероях, объединённых для борьбы с глобальной угрозой.",
-    "Аватар — научно-фантастический фильм, действие которого происходит на инопланетной луне Пандора.",
-    "Титаник — драмеди о любви на фоне трагической катастрофы знаменитого корабля.",
-    "Мы — психологический хоррор о борьбе человека с его зловещей тенью.",
+  const images = [gta3, gta4, gta5v, gtavc];
+
+  const news = [
+    {
+      id: 1,
+      title: "Новый мод для GTA 5",
+      description:
+        "Сейчас доступен новый мод, который изменяет погодные условия и добавляет уникальные эффекты в мир GTA 5!",
+      link: "/news/1",
+    },
+    {
+      id: 2,
+      title: "Обновление для GTA 4",
+      description:
+        "Для GTA 4 выпустили очередное обновление, которое улучшает графику и добавляет новый контент!",
+      link: "/news/2",
+    },
+    {
+      id: 3,
+      title: "Голосование за будущие DLC в GTA V",
+      description:
+        "Rockstar Games запускает голосование за то, какие DLC должны быть добавлены в GTA V в следующем обновлении.",
+      link: "/news/3",
+    },
   ];
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const filtered = genres.filter((movie) =>
-      movie.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = genres.filter(
+      (movie) =>
+        searchQuery.trim() !== "" &&
+        movie.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
     );
     setFilteredMovies(filtered);
   };
 
   const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length); //
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
   const prevImage = () => {
@@ -41,210 +60,171 @@ export default function Home() {
     );
   };
 
-  // Используем useEffect для автоматического переключения слайдов через 5 секунд
   useEffect(() => {
     const interval = setInterval(() => {
       nextImage();
-    }, 5000); // Переключение через 5 секунд
+    }, 5000);
 
-    // Очищаем интервал, когда компонент размонтируется
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="bg-gray-950 min-h-screen flex flex-col">
-      <header className="bg-gray-900 text-white p-4 flex justify-between items-center w-full">
-        <div className="text-2xl font-bold">DRCX'S MOVIES</div>
+    <section className="bg-gradient-to-r from-indigo-900 to-indigo-600 min-h-screen flex flex-col">
+      <header className="bg-gradient-to-r from-indigo-700 to-indigo-800 text-white p-6 flex justify-between items-center w-full shadow-lg rounded-b-xl">
+        <div className="text-3xl font-bold font-serif">DRCX'S GAMES</div>
 
         <form
           onSubmit={handleSearch}
-          className="hidden md:flex items-center space-x-2"
+          className="relative flex items-center space-x-2 w-full max-w-lg"
         >
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск фильмов..."
-            className="p-2 rounded-l-lg bg-gray-700 text-white placeholder-gray-400"
+            placeholder="Поиск игры..."
+            className="p-3 rounded-l-lg bg-gray-800 text-white placeholder-gray-400 w-full transition-all focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
           <button
             type="submit"
-            className="p-2 bg-blue-500 rounded-r-lg hover:bg-blue-600"
+            className="p-3 bg-purple-900 rounded-r-lg hover:bg-purple-600 transition-all transform hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             Поиск
           </button>
         </form>
-
-        <div className="hidden md:block text-lg">
-          <a href="/profile" className="hover:underline">
-            Личный кабинет
-          </a>
-        </div>
-
-        {/* Бургер-меню */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-white p-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Меню для мобильных устройств */}
-        <div
-          className={`md:hidden ${
-            isMenuOpen ? "block" : "hidden"
-          } absolute top-0 left-0 right-0 bg-gray-900 text-white p-4`}
-        >
-          <ul className="space-y-4">
-            <li>
-              <a href="/profile" className="hover:underline">
-                Личный кабинет
-              </a>
-            </li>
-            <li>
-              <form
-                onSubmit={handleSearch}
-                className="flex items-center space-x-2"
-              >
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Поиск фильмов..."
-                  className="p-2 rounded-l-lg bg-gray-700 text-white placeholder-gray-400"
-                />
-                <button
-                  type="submit"
-                  className="p-2 bg-blue-500 rounded-r-lg hover:bg-blue-600"
-                >
-                  Поиск
-                </button>
-              </form>
-            </li>
-          </ul>
-        </div>
       </header>
 
-      {/* Основная часть с изображением слайдера */}
-      <main className="flex justify-center items-center flex-1">
-        <div className="relative w-full h-screen">
-          <div className="transition-all duration-700 ease-in-out transform">
+      <main className="flex justify-center items-center relative mt-8">
+        <motion.div
+          className="relative w-full h-[75vh] sm:h-[80vh] md:h-[90vh] lg:h-[90vh] rounded-xl shadow-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2 }}
+        >
+          <div className="transition-all duration-700 ease-in-out transform rounded-xl shadow-lg">
             <Image
               src={images[currentIndex]}
-              alt="Movie poster"
-              className="rounded-lg object-cover justify-self-center w-[700px] h-[840px] mt-8"
+              alt="Game poster"
+              className="w-full h-[800px] object-cover rounded-xl"
             />
-          </div>
-
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-sm text-center bg-black bg-opacity-50 p-4 rounded-lg">
-            {descriptions[currentIndex]}
           </div>
 
           <button
             onClick={prevImage}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-4 rounded-full hover:bg-gray-600"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-4 rounded-full hover:bg-gray-600 md:hidden"
           >
             &#10094;
           </button>
           <button
             onClick={nextImage}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-4 rounded-full hover:bg-gray-600"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-4 rounded-full hover:bg-gray-600 md:hidden"
           >
             &#10095;
           </button>
-        </div>
+        </motion.div>
       </main>
 
-      {/* Секция с кнопкой и описанием */}
-      <main>
-        <div className="justify-self-center mt-36">
-          <button className="bg-red-700 hover:bg-gray-500 rounded-lg w-44 h-12 text-white">
-            Смотреть
-          </button>
-        </div>
-        <div className="pl-3">
-          <h1 className="text-white mt-10 text-3xl">
-            Изучите наше разнообразие категорий:
-          </h1>
-          <p className="text-gray-500">
-            Ищете ли вы комедию, которая заставит вас смеяться, драму, которая
-            заставит задуматься, или документальный фильм, чтобы узнать что-то
-            новое.
-          </p>
-        </div>
-      </main>
-
-      {/* Карточки жанров */}
-      <section>
+      <section className="mt-72">
         <div className="flex flex-wrap gap-8 mt-8 justify-center">
           {filteredMovies.length > 0 ? (
             filteredMovies.map((product) => (
-              <div
+              <motion.div
                 key={product.id}
-                className="product bg-gray-900 p-2 w-64 text-white rounded-lg shadow-md transition-transform transform hover:scale-105"
+                className="product h-96 p-2 w-64 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Link href={`/movie-details/${product.id}`}>
-                  <div>
+                  <div className="cursor-pointer">
                     <Image
                       width={500}
-                      height={300}
+                      height={400}
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-60 object-cover rounded-lg"
+                      className="w-full h-72 object-cover rounded-lg"
                     />
-                    <h3 className="text-xl font-semibold mt-4">
+                    <h3 className="text-xl font-semibold mt-4 text-center">
                       {product.name}
                     </h3>
                   </div>
                 </Link>
-
-                <Link href={`/movie-details/${product.id}`}>
-                  <button className="mt-4 w-full py-2 bg-red-700 text-white rounded-full hover:bg-gray-500">
-                    Смотреть
-                  </button>
-                </Link>
-              </div>
+              </motion.div>
             ))
           ) : (
-            <p className="text-white">Фильмы не найдены</p>
+            <p className="text-white">Игры не найдены</p>
           )}
         </div>
       </section>
 
-      <section className="mt-10">
-        <div className="absolute">
-          <Image src={bg} className="w-full" alt="background" />
+      <section className="mt-24 px-4">
+        <h2 className="text-3xl font-semibold text-white text-center mb-8">
+          Свежие новости о GTA
+        </h2>
+        <div className="space-y-8">
+          {news.map((item) => (
+            <motion.div
+              key={item.id}
+              className="news-item bg-gray-800 text-white p-6 rounded-lg shadow-xl transition-transform transform hover:scale-105 hover:shadow-2xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href={item.link}>
+                <div className="cursor-pointer">
+                  <h3 className="text-2xl font-semibold">{item.title}</h3>
+                  <p className="mt-2">{item.description}</p>
+                  <p className="mt-4 text-blue-400 hover:underline">
+                    Читать далее...
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
-        <h1 className="relative text-4xl text-white p-28">
-          Начните бесплатный просмотр фильма сегодня!
-        </h1>
-        <p className="relative text-2xl text-white pl-28 bottom-10">
-          Зарегистрируйтесь и смотрите бесплатно фильмы на свой вкус
-        </p>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 mt-14">
+      <section className="mt-24 px-4 text-white">
+        <h2 className="text-3xl font-semibold text-center mb-8">
+          GTA 6: Релиз и подробности
+        </h2>
+
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
+          <h3 className="text-2xl font-semibold">Дата релиза: 2025 год</h3>
+          <p className="mt-4">
+            GTA 6 обещает стать самой амбициозной игрой в истории серии.
+            Ожидается, что игра будет включать новые города, сюжетные линии и
+            улучшенную графику.
+          </p>
+
+          <div className="mt-6 text-lg">
+            <h4 className="font-semibold">Будь в курсе:</h4>
+            <p className="mt-2">
+              Мы будем держать тебя в курсе всех новостей и обновлений по GTA 6!
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="mt-24 px-4 text-white">
+        <h2 className="text-3xl font-semibold text-center mb-8">
+          Поделиться с друзьями
+        </h2>
+        <div className="flex justify-center space-x-4">
+          <button className="p-2 bg-blue-500 text-white rounded-full">
+            Facebook
+          </button>
+          <button className="p-2 bg-blue-400 text-white rounded-full">
+            Twitter
+          </button>
+          <button className="p-2 bg-red-500 text-white rounded-full">
+            Instagram
+          </button>
+        </div>
+      </section>
+
+      <footer className="bg-gradient-to-r from-indigo-700 to-indigo-800 text-white py-8 mt-14 rounded-t-xl shadow-lg">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <div className="text-2xl font-bold">DRCX'S MOVIES</div>
+          <div className="text-2xl font-bold">DRCX'S GAMES</div>
         </div>
         <div className="text-center text-sm text-gray-400 mt-4">
-          &copy; {new Date().getFullYear()} DRCX'S MOVIES. Все права защищены.
+          &copy; {new Date().getFullYear()} DRCX'S GAMES. Все права защищены.
         </div>
       </footer>
     </section>
